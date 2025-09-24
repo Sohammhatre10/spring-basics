@@ -11,13 +11,13 @@ public class BankingApplication {
         System.out.println("Banking Application is running...");
     }
 
-    public void processTransaction(String message, String ID) {
+    public void processTransactionRDBMS(String message, String ID) {
         RDBMS.saveTransaction(message);
         emailService.sendNotification(message, ID);
         smsService.sendNotification(message, ID);
     }
 
-    public void processTransaction1(String message, String ID) {
+    public void processTransactionNRDBMS(String message, String ID) {
         NRDBMS.saveTransaction(message);
         emailService.sendNotification(message, ID);
         smsService.sendNotification(message, ID);
