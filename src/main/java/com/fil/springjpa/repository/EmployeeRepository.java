@@ -1,31 +1,44 @@
 package com.fil.springjpa.repository;
 
 import com.fil.springjpa.entity.Employee;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.*;
 
 @Repository
-@Transactional
 public class EmployeeRepository {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final Map<Long, Employee> employeeMap = new HashMap<>();
+    private long idCounter = 1;
+
+    public EmployeeRepository() {
+        Employee e1 = new Employee(1L, "Alice", "Developer");
+        Employee e2 = new Employee(2L, "Bob", "Manager");
+        Employee e3 = new Employee(3L, "Charlie", "Tester");
+
+        employeeMap.put(e1.getId(), e1);
+        employeeMap.put(e2.getId(), e2);
+        employeeMap.put(e3.getId(), e3);
+
+        idCounter = 4;
+    }
 
     public List<Employee> findAll() {
-        return entityManager.createQuery("SELECT e FROM Employee e", Employee.class)
-                .getResultList();
+        return new ArrayList<>(employeeMap.values());
     }
 
     public Employee save(Employee employee) {
         if (employee.getId() == null) {
-            entityManager.persist(employee); // insert
-            return employee;
+            employee.setId(idCounter++);
+            employeeMap.put(employee.getId(), employee);
         } else {
-            return entityManager.merge(employee); // update
+            if (employeeMap.containsKey(employee.getId())) {
+                throw new IllegalArgumentException("Employee with ID " + employee.getId() + " already exists.");
+            } else {
+                employeeMap.put(employee.getId(), employee);
+            }
         }
+        return employee;
     }
+
 }
