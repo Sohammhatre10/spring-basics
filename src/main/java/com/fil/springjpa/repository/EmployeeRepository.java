@@ -41,4 +41,8 @@ public class EmployeeRepository {
         return employee;
     }
 
+    public Optional<Employee> findById(Long id) {
+        return Optional.ofNullable(employeeMap.get((Long) id));
+    }
+
 }
